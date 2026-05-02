@@ -1,0 +1,31 @@
+name: CD Dostava na DockerHub (29884_deploy)
+
+on:
+  workflow_run:
+    workflows: ["CI Testiranje Kode (29884_test)"]
+    types:
+      - completed
+
+jobs:
+  deploy_to_docker:
+    # Zaženi samo, če je bil testni workflow uspešen
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: self-hosted
+    steps:
+      - name: Prenos kode
+        uses: actions/checkout@v4
+
+      # Prijava v DockerHub (Uporabite Secrets za varnost!)
+      - name: Prijava v DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Izgradnja Docker slike
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/moja-aplikacija:latest .
+
+      - name: Potisk na DockerHub
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/moja-aplikacija:latest

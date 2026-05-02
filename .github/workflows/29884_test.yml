@@ -1,0 +1,65 @@
+name: CI Testiranje Kode (29884_test)
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  # PRVI POSEL: Preverjanje obstoja testnih skript
+  check_tests:
+    runs-on: self-hosted
+    outputs:
+      error_state: ${{ steps.check.outputs.error_state }}
+    steps:
+      - name: Prenos kode (Checkout)
+        uses: actions/checkout@v4
+
+      - name: Preveri obstoj testnih datotek
+        id: check
+        run: |
+          # Poskusimo najti teste v mapi tests/
+          if [ -d "tests" ] && [ "$(ls -A tests)" ]; then
+            echo "" > napaka.txt
+          else
+            echo "KRITIČNA NAPAKA: Testne skripte ne obstajajo!" > napaka.txt
+            exit 1
+          fi
+        # Preusmeritev morebitne standardne napake v datoteko (zahteve naloge)
+        continue-on-error: true
+
+      - name: Shrani artefakt z napako
+        uses: actions/upload-artifact@v4
+        with:
+          name: error-log
+          path: napaka.txt
+
+  # DRUGI POSEL: Izvajanje testov z uporabo matrike
+  run_tests:
+    needs: check_tests
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10"] # Uporaba matrike za različne verzije
+    steps:
+      - name: Prenos kode
+        uses: actions/checkout@v4
+
+      - name: Prenos artefakta iz prvega posla
+        uses: actions/download-artifact@v4
+        with:
+          name: error-log
+
+      - name: Preveri vsebino napaka.txt
+        run: |
+          if [ -s napaka.txt ]; then
+            echo "Prekinjam, ker je bila v prvem poslu zaznana napaka."
+            cat napaka.txt
+            exit 1
+          fi
+
+      - name: Priprava okolja in zagon testov
+        run: |
+          # Namestitev odvisnosti (primer za Python)
+          pip install -r requirements.txt
+          # Zagon lastnih testov (npr. pytest)
+          pytest tests/my_custom_tests.py
