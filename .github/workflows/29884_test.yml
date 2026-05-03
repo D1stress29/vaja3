@@ -39,7 +39,7 @@ jobs:
     runs-on: self-hosted
     strategy:
       matrix:
-        python-version: ["3.9", "3.10"] # Uporaba matrike za različne verzije
+        python-version: ["3.12"] # Uporaba matrike za različne verzije
     steps:
       - name: Prenos kode
         uses: actions/checkout@v4
