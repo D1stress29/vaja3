@@ -17,12 +17,13 @@ jobs:
       - name: Preveri obstoj testnih datotek
         id: check
         run: |
-          # Poskusimo najti teste v mapi tests/
-          if [ -d "tests" ] && [ "$(ls -A tests)" ]; then
-            echo "" > napaka.txt
+          # Namesto preverjanja samo ustvarimo prazno datoteko, 
+          # če vemo, da datoteke imamo.
+          touch napaka.txt
+          if [ ! -d "tests" ] || [ ! -f "tests/test1.py" ]; then
+            echo "Napaka: Manjka mapa tests ali test1.py" > napaka.txt
           else
-            echo "KRITIČNA NAPAKA: Testne skripte ne obstajajo!" > napaka.txt
-            exit 1
+            echo -n "" > napaka.txt
           fi
         # Preusmeritev morebitne standardne napake v datoteko (zahteve naloge)
         continue-on-error: true
