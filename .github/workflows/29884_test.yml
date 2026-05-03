@@ -63,3 +63,4 @@ jobs:
           pip install -r requirements.txt
           # Zagon lastnih testov (npr. pytest)
           pytest tests/my_custom_tests.py
+          #nekineki
