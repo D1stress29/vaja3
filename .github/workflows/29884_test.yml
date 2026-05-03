@@ -64,4 +64,4 @@ jobs:
           # Zagon lastnih testov (npr. pytest)
           python3 -m pytest tests/test1.py
           #nekineki
-          #neki
+         
