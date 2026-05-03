@@ -60,7 +60,7 @@ jobs:
       - name: Priprava okolja in zagon testov
         run: |
           # Namestitev odvisnosti (primer za Python)
-          pip install -r requirements.txt
+          pip install -r requirements.txt --break-system-packages
           # Zagon lastnih testov (npr. pytest)
           pytest tests/test1.py
           #nekineki
