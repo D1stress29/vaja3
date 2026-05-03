@@ -29,3 +29,4 @@ jobs:
       - name: Potisk na DockerHub
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/moja-aplikacija:latest
+          #neki
