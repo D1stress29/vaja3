@@ -62,6 +62,6 @@ jobs:
           # Namestitev odvisnosti (primer za Python)
           pip install -r requirements.txt --break-system-packages
           # Zagon lastnih testov (npr. pytest)
-          pytest tests/test1.py
+          python3 -m pytest tests/test1.py
           #nekineki
           #neki
